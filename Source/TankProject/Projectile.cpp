@@ -11,12 +11,13 @@ AProjectile::AProjectile()
 {
  	PrimaryActorTick.bCanEverTick = false;
 
-	USceneComponent* sceeneCpm = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	USceneComponent* sceeneCpm = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 	RootComponent = sceeneCpm;
 
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
 	ProjectileMesh->SetupAttachment(RootComponent);
 	ProjectileMesh->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::OnMeshOverlapBegin);
+
 }
 
 void AProjectile::Start()
