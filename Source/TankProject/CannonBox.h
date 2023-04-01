@@ -4,26 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Cannon.h"
-#include "AmmoBox.generated.h"
+#include "CannonBox.generated.h"
 
 UCLASS()
-class TANKPROJECT_API AAmmoBox : public AActor
+class TANKPROJECT_API ACannonBox : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-
-	AAmmoBox();
+	ACannonBox();
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
-	class UStaticMeshComponent* AmmoMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	class UStaticMeshComponent* CannonBoxMesh;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
-	int AmmoAmmount = 10;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TSubclassOf<class ACannon> CannonClass;
 
 	UFUNCTION()

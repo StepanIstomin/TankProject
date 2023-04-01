@@ -29,6 +29,9 @@ public:
 	void Autofire();
 
 	void SetupCannon(TSubclassOf<ACannon> newCannonClass);
+	void SetupSecondCannon(TSubclassOf<ACannon> newCannonClass);
+	void SwapCannon();
+	void AddAmmo(int ammo);
 
 protected:
 	virtual void BeginPlay() override;
@@ -51,7 +54,10 @@ protected:
 	UPROPERTY()
 	ACannon* Cannon;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
-	TSubclassOf<ACannon> CannonClass;
+	TSubclassOf<ACannon> MainCannonClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
+	TSubclassOf<ACannon> SecondCannonClass;
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
 	class UArrowComponent* CannonSetupPoint;
 	

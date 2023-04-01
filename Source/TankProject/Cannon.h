@@ -19,6 +19,8 @@ public:
 	ACannon();
 	void Fire();
 	void StartAutofire();
+	void SetAmmoAmount(int ammo);
+	int GetAmmoAmount();
 	
 protected:
 	// Called when the game starts or when spawned
@@ -39,7 +41,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
 	float FireDamage = 1;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire params")
 	int AmmoAmount = 10;
 
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
@@ -50,6 +52,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
 	ECannonType CannonType = ECannonType::FireProjectile;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
+	TSubclassOf<class AProjectile> ProjectileClass;
 	
 	bool ReadyToFire = false;
 	bool BurstActive = false;

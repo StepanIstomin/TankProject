@@ -11,11 +11,12 @@ AProjectile::AProjectile()
 {
  	PrimaryActorTick.bCanEverTick = false;
 
-	USceneComponent* sceeneCpm = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
-	RootComponent = sceeneCpm;
+	USceneComponent* SceneCopm = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
+	RootComponent = SceneCopm;
 
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
 	ProjectileMesh->SetupAttachment(RootComponent);
+	ProjectileMesh->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
 	ProjectileMesh->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::OnMeshOverlapBegin);
 
 }
@@ -33,5 +34,11 @@ void AProjectile::Move()
 
 void AProjectile::OnMeshOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const	FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Projectile %s collided with %s. "), *GetName(), *OtherActor->GetName());
+	if (OtherActor)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Projectile %s collided with %s. "), *GetName(), *OtherActor->GetName());
+		OtherActor->Destroy();
+		Destroy();
+	}
+	
 }

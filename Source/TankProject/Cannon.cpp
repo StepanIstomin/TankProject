@@ -4,6 +4,8 @@
 #include "Cannon.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/ArrowComponent.h"
+#include "Projectile.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 ACannon::ACannon()
@@ -33,11 +35,45 @@ void ACannon::Fire()
 	if (CannonType == ECannonType::FireProjectile)
 	{
 		GEngine->AddOnScreenDebugMessage(20, 2, FColor::Green, "Fire - projectile");
+		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass,
+			ProjectileSpawnPoint->GetComponentLocation(),
+			ProjectileSpawnPoint->GetComponentRotation());
+		if (Projectile)
+		{
+			Projectile->Start();
+		}
 
+	}
+	else if (CannonType == ECannonType::AutoProjectile) {
+		StartAutofire();
 	}
 	else
 	{
 		GEngine->AddOnScreenDebugMessage(20, 2, FColor::Green, "Fire - trace");
+
+		FHitResult hitResult;
+		FCollisionQueryParams traceParams = FCollisionQueryParams(FName(TEXT("FireTrace")), true, this);
+		traceParams.AddIgnoredActor(this);
+
+		traceParams.bTraceComplex = true;
+		traceParams.bReturnPhysicalMaterial = false;
+		FVector start = ProjectileSpawnPoint->GetComponentLocation();
+		FVector end = start + ProjectileSpawnPoint->GetForwardVector() * FireRange;
+		if (GetWorld()->LineTraceSingleByChannel(hitResult, start, end, ECollisionChannel::ECC_Visibility, traceParams))
+		{
+			DrawDebugLine(GetWorld(), start, hitResult.Location, FColor::Red, false, 0.5f, 0, 5);
+			if (hitResult.GetActor())
+			{
+				AActor* OverlappedActor = hitResult.GetActor();
+				UE_LOG(LogTemp, Warning, TEXT("Ray collided with %s. "), *OverlappedActor->GetName());
+				OverlappedActor->Destroy();
+			}
+		}
+		else
+		{
+			DrawDebugLine(GetWorld(), start, end, FColor::Yellow, false, 0.5f, 0, 5);
+		}
+
 	}
 
 	AmmoAmount--;
@@ -51,14 +87,16 @@ void ACannon::Autofire()
 {
 	if (BurstCount > 0)
 	{
-		if (CannonType == ECannonType::FireProjectile)
+
+		GEngine->AddOnScreenDebugMessage(BurstCount, 2, FColor::Green, "Autofire - projectile burst shot");
+		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass,
+			ProjectileSpawnPoint->GetComponentLocation(),
+			ProjectileSpawnPoint->GetComponentRotation());
+		if (Projectile)
 		{
-			GEngine->AddOnScreenDebugMessage(BurstCount, 2, FColor::Green, "Autofire - projectile burst shot");
+			Projectile->Start();
 		}
-		else
-		{
-			GEngine->AddOnScreenDebugMessage(BurstCount, 2, FColor::Green, "Autofire - trace burst shot");
-		}
+
 		BurstCount--;
 		BurstActive = true;
 		GetWorld()->GetTimerManager().SetTimer(BurstTimer, this, &ACannon::Autofire, 1 / BurstRate, false);
@@ -81,6 +119,16 @@ void ACannon::StartAutofire()
 	}
 	ReadyToFire = false;
 	Autofire();
+}
+
+void ACannon::SetAmmoAmount(int ammo)
+{
+	AmmoAmount = ammo;
+}
+
+int ACannon::GetAmmoAmount()
+{
+	return AmmoAmount;
 }
 
 bool ACannon::IsReadyToFire()

@@ -31,6 +31,7 @@ protected:
 
 	void Fire();
 	void Autofire();
+	void SwapCannon();
 
 	FVector MousePos;
 };

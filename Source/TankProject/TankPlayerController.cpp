@@ -12,7 +12,8 @@ void ATankPlayerController::SetupInputComponent()
 	InputComponent->BindAxis("MoveRight", this, &ATankPlayerController::MoveRight);
 	InputComponent->BindAxis("RotateRight", this, &ATankPlayerController::RotateRight);
 	InputComponent->BindAction("Fire", EInputEvent::IE_Pressed, this, &ATankPlayerController::Fire);
-	InputComponent->BindAction("Autofire", EInputEvent::IE_Pressed, this, &ATankPlayerController::Autofire);
+	//InputComponent->BindAction("Autofire", EInputEvent::IE_Pressed, this, &ATankPlayerController::Autofire);
+	InputComponent->BindAction("SwapCannon", EInputEvent::IE_Pressed, this, &ATankPlayerController::SwapCannon);
 }
 
 void ATankPlayerController::Tick(float DeltaSeconds)
@@ -26,7 +27,7 @@ void ATankPlayerController::Tick(float DeltaSeconds)
 	FVector dir = MousePos - PawnPosition;
 	dir.Normalize();	// normalize the vector, bring it to a single value
 	MousePos = PawnPosition + dir * 1000;	// 1000 - drawing constant
-	DrawDebugLine(GetWorld(), PawnPosition, MousePos, FColor::Green, false, 0.1f, 0, 5);	// Drawing a line for visual control
+	//DrawDebugLine(GetWorld(), PawnPosition, MousePos, FColor::Green, false, 0.1f, 0, 5);	// Drawing a line for visual control
 }
 
 void ATankPlayerController::BeginPlay()
@@ -73,5 +74,13 @@ void ATankPlayerController::Autofire()
 	if (TankPawn)
 	{
 		TankPawn->Autofire();
+	}
+}
+
+void ATankPlayerController::SwapCannon()
+{
+	if (TankPawn)
+	{
+		TankPawn->SwapCannon();
 	}
 }

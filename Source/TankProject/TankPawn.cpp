@@ -50,8 +50,6 @@ void ATankPawn::Tick(float DeltaTime)
 
 	//Turret Rotation
 	RotateTurret();
-	
-
 }
 
 void ATankPawn::MoveForward(float Value)
@@ -94,6 +92,8 @@ void ATankPawn::SetupCannon(TSubclassOf<ACannon> newCannonClass)
 	{
 		Cannon->Destroy();
 	}
+
+
 	FActorSpawnParameters spawnParams;
 	spawnParams.Instigator = this;
 	spawnParams.Owner = this;
@@ -101,11 +101,34 @@ void ATankPawn::SetupCannon(TSubclassOf<ACannon> newCannonClass)
 	Cannon->AttachToComponent(CannonSetupPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 }
 
+void ATankPawn::SwapCannon()
+{
+	int tempAmmo;
+	if (Cannon)
+	{
+		tempAmmo = Cannon->GetAmmoAmount();
+	}
+	SetupCannon(SecondCannonClass);
+	GEngine->AddOnScreenDebugMessage(11, 2, FColor::Purple, FString::Printf(TEXT("Ammo left %i"), tempAmmo));
+	Cannon->SetAmmoAmount(tempAmmo);
+	TSubclassOf<ACannon> TempCannonClass = MainCannonClass;
+	MainCannonClass = SecondCannonClass;
+	SecondCannonClass = TempCannonClass;
+}
+
+void ATankPawn::AddAmmo(int ammo)
+{
+	if (Cannon)
+	{
+		Cannon->SetAmmoAmount(Cannon->GetAmmoAmount() + ammo);
+	}
+}
+
 void ATankPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	TankController = Cast<ATankPlayerController>(GetController());
-	SetupCannon(CannonClass);
+	SetupCannon(MainCannonClass);
 }
 
 void ATankPawn::MoveTank(float DeltaTime)
