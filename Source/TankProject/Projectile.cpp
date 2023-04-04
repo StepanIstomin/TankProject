@@ -5,6 +5,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "TimerManager.h"
 #include "Components/SceneComponent.h"
+#include "Components/SphereComponent.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -14,10 +15,15 @@ AProjectile::AProjectile()
 	USceneComponent* SceneCopm = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 	RootComponent = SceneCopm;
 
+	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
+	SphereCollision->SetupAttachment(RootComponent);
+	SphereCollision->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
+	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::OnMeshOverlapBegin);
+
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
-	ProjectileMesh->SetupAttachment(RootComponent);
-	ProjectileMesh->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
-	ProjectileMesh->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::OnMeshOverlapBegin);
+	ProjectileMesh->SetupAttachment(SphereCollision);
+	//ProjectileMesh->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
+	//ProjectileMesh->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::OnMeshOverlapBegin);
 
 }
 
