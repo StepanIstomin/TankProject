@@ -6,6 +6,7 @@
 #include "Components/ArrowComponent.h"
 #include "Projectile.h"
 #include "DrawDebugHelpers.h"
+#include "DamageTaker.h"
 
 // Sets default values
 ACannon::ACannon()
@@ -49,31 +50,7 @@ void ACannon::Fire()
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(20, 2, FColor::Green, "Fire - trace");
-
-		FHitResult hitResult;
-		FCollisionQueryParams traceParams = FCollisionQueryParams(FName(TEXT("FireTrace")), true, this);
-		traceParams.AddIgnoredActor(this);
-
-		traceParams.bTraceComplex = true;
-		traceParams.bReturnPhysicalMaterial = false;
-		FVector start = ProjectileSpawnPoint->GetComponentLocation();
-		FVector end = start + ProjectileSpawnPoint->GetForwardVector() * FireRange;
-		if (GetWorld()->LineTraceSingleByChannel(hitResult, start, end, ECollisionChannel::ECC_Visibility, traceParams))
-		{
-			DrawDebugLine(GetWorld(), start, hitResult.Location, FColor::Red, false, 0.5f, 0, 5);
-			if (hitResult.GetActor())
-			{
-				AActor* OverlappedActor = hitResult.GetActor();
-				UE_LOG(LogTemp, Warning, TEXT("Ray collided with %s. "), *OverlappedActor->GetName());
-				OverlappedActor->Destroy();
-			}
-		}
-		else
-		{
-			DrawDebugLine(GetWorld(), start, end, FColor::Yellow, false, 0.5f, 0, 5);
-		}
-
+		LaserShot();
 	}
 
 	AmmoAmount--;
@@ -81,6 +58,50 @@ void ACannon::Fire()
 	
 	ReadyToFire = false;
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimer, this, &ACannon::Reload, 1 / FireRate, false);
+}
+
+void ACannon::LaserShot()
+{
+	GEngine->AddOnScreenDebugMessage(20, 2, FColor::Green, "Fire - trace");
+
+	FHitResult hitResult;
+	FCollisionQueryParams traceParams = FCollisionQueryParams(FName(TEXT("FireTrace")), true, this);
+	traceParams.AddIgnoredActor(this);
+	traceParams.bTraceComplex = true;
+	traceParams.bReturnPhysicalMaterial = false;
+
+
+	FVector start = ProjectileSpawnPoint->GetComponentLocation();
+	FVector end = start + ProjectileSpawnPoint->GetForwardVector() * FireRange;
+
+	if (GetWorld()->LineTraceSingleByChannel(hitResult, start, end, ECollisionChannel::ECC_Visibility, traceParams))
+	{
+		DrawDebugLine(GetWorld(), start, hitResult.Location, FColor::Red, false, 0.5f, 0, 5);
+		if (hitResult.GetActor())
+		{
+			//AActor* OverlappedActor = hitResult.GetActor();
+			//UE_LOG(LogTemp, Warning, TEXT("Ray collided with %s. "), *OverlappedActor->GetName());
+			//OverlappedActor->Destroy();
+
+			float Damage = 5.0f;
+
+			AActor* owner = GetOwner();
+			IDamageTaker* DamageActor = Cast<IDamageTaker>(hitResult.GetActor());
+
+			if (DamageActor)
+			{
+				FDamageData damageData;
+				damageData.DamageValue = Damage;
+				damageData.Instigator = owner;
+				damageData.DamageMaker = this;
+				DamageActor->TakeDamage(damageData);
+			}
+		}
+	}
+	else
+	{
+		DrawDebugLine(GetWorld(), start, end, FColor::Yellow, false, 0.5f, 0, 5);
+	}
 }
 
 void ACannon::Autofire()

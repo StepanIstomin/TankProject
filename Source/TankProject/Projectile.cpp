@@ -23,9 +23,6 @@ AProjectile::AProjectile()
 
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
 	ProjectileMesh->SetupAttachment(SphereCollision);
-	//ProjectileMesh->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
-	//ProjectileMesh->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::OnMeshOverlapBegin);
-
 }
 
 void AProjectile::Start()
@@ -39,12 +36,14 @@ void AProjectile::Move()
 	SetActorLocation(nextPosition);
 }
 
-void AProjectile::OnMeshOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const	FHitResult& SweepResult)
+void AProjectile::OnMeshOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
+	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Projectile %s collided with %s. "), *GetName(), *OtherActor->GetName());
 
 	AActor* owner = GetOwner(); //Cannon
 	AActor* ownerByOwner = owner != nullptr ? owner->GetOwner() : nullptr; // Tank or Turret
+
 	if (OtherActor != owner && OtherActor != ownerByOwner) //  self-damage check
 	{
 		if (OtherActor)

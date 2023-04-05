@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "GameUnit.h"
 #include "TankPawn.generated.h"
 
 class UStaticMeshComponent;
 class ACannon;
 
 UCLASS()
-class TANKPROJECT_API ATankPawn : public APawn
+class TANKPROJECT_API ATankPawn : public AGameUnit
 {
 	GENERATED_BODY()
 
@@ -29,38 +30,38 @@ public:
 	void Autofire();
 
 	void SetupCannon(TSubclassOf<ACannon> newCannonClass);
-	void SetupSecondCannon(TSubclassOf<ACannon> newCannonClass);
 	void SwapCannon();
 	void AddAmmo(int ammo);
 
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-	UStaticMeshComponent* BodyMesh;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	//UStaticMeshComponent* BodyMesh;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-	UStaticMeshComponent* TurretMesh;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	//UStaticMeshComponent* TurretMesh;
+
+	//UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
+	//class UArrowComponent* CannonSetupPoint;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-	class UBoxComponent* BoxCollision;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	//class UBoxComponent* BoxCollision;
+
+	//UPROPERTY()
+	//ACannon* Cannon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	class USpringArmComponent* SpringArm; // component for camera
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	class UCameraComponent* Camera;
-
-	UPROPERTY()
-	ACannon* Cannon;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
 	TSubclassOf<ACannon> MainCannonClass;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
 	TSubclassOf<ACannon> SecondCannonClass;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
-	class UArrowComponent* CannonSetupPoint;
-	
+		
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float MoveSpeed = 100.0f;
 

@@ -18,6 +18,7 @@ public:
 	// Sets default values for this actor's properties
 	ACannon();
 	void Fire();
+	void LaserShot();
 	void StartAutofire();
 	void SetAmmoAmount(int ammo);
 	int GetAmmoAmount();
@@ -45,7 +46,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire params")
 	int AmmoAmount = 10;
 
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
 	int ShotsInBurst = 3;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")

@@ -10,15 +10,13 @@ ATurret::ATurret()
 {
  	PrimaryActorTick.bCanEverTick = false;
 
-	HitCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("Hit collider"));
-	//HitCollider->SetupAttachment(TurretMesh);
-	RootComponent = HitCollider;
+	//BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Hit collider"));
+	//RootComponent = BoxCollision;
 
-	BodyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Turret body"));
-	BodyMesh->SetupAttachment(HitCollider);
+	//BodyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Turret body"));
+	//BodyMesh->SetupAttachment(BoxCollision);
 	
 	TurretMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Turret turret"));
-	//TurretMesh->AttachToComponent(BodyMesh, FAttachmentTransformRules::KeepRelativeTransform);
 	TurretMesh->SetupAttachment(BodyMesh, "ADD_Parts_Here_Socket");
 
 	CannonSetupPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("Cannon setup point"));
@@ -31,12 +29,12 @@ ATurret::ATurret()
 	if (bodyMeshTemp)
 		BodyMesh->SetStaticMesh(bodyMeshTemp);
 
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health component"));
-	HealthComponent->OnDie.AddUObject(this, &ATurret::Die);
-	HealthComponent->OnDamaged.AddUObject(this, &ATurret::DamageTaked);
+	//HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health component"));
+	//HealthComponent->OnDie.AddUObject(this, &ATurret::Die);
+	//HealthComponent->OnDamaged.AddUObject(this, &ATurret::DamageTaked);
 }
 
-void ATurret::TakeDamage(FDamageData DamageData)
+/*void ATurret::TakeDamage(FDamageData DamageData)
 {
 	HealthComponent->TakeDamage(DamageData);
 }
@@ -49,7 +47,7 @@ void ATurret::Die()
 void ATurret::DamageTaked(float DamageValue)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Turret %s taked damage:%f Health:%f"), *GetName(), DamageValue, HealthComponent->GetHealth());
-}
+}*/
 
 void ATurret::BeginPlay()
 {
