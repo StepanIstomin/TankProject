@@ -14,6 +14,18 @@ enum class ECannonType : uint8
 	AutoProjectile = 2 UMETA(DisplayName = "Use autocannon projectile")
 };
 
+USTRUCT()
+struct FDamageData
+{
+	GENERATED_BODY()
+	UPROPERTY()
+	float DamageValue;
+	UPROPERTY()
+	AActor * Instigator;
+	UPROPERTY()
+	AActor * DamageMaker;
+};
+
 
 UCLASS()
 class TANKPROJECT_API UGameStruct : public UObject

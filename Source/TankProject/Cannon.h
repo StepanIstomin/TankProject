@@ -21,7 +21,8 @@ public:
 	void StartAutofire();
 	void SetAmmoAmount(int ammo);
 	int GetAmmoAmount();
-	
+	bool IsReadyToFire();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -63,7 +64,7 @@ protected:
 	FTimerHandle ReloadTimer;
 	FTimerHandle BurstTimer;
 
-	bool IsReadyToFire();
+	
 
 	void Reload();
 	void Autofire();

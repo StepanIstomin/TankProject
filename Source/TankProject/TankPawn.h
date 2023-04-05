@@ -68,7 +68,7 @@ protected:
 	float RotationSpeed = 100.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Rotation")
-	float TurretRotationInterpolationKey = 0.5f;
+	float TurretRotationInterpolationKey = 0.02f;
 
 	UPROPERTY()
 	class ATankPlayerController* TankController;
