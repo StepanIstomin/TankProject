@@ -22,6 +22,9 @@ class TANKPROJECT_API ATurret : public AGameUnit
 public:	
 	ATurret();
 
+	UPROPERTY()
+	AGameUnit* TurretPawn;
+
 	//UFUNCTION()
 	//void TakeDamage(FDamageData DamageData);
 
@@ -30,6 +33,9 @@ public:
 
 	//UFUNCTION()
 	//void DamageTaked(float DamageValue);
+
+
+	FVector GetEyesPosition() const;
 
 protected:
 	//UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
@@ -50,8 +56,8 @@ protected:
 	//UPROPERTY()
 	//ACannon* Cannon;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-	TSubclassOf<ACannon> CannonClass;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+	//TSubclassOf<ACannon> CannonClass;
 
 	UPROPERTY()
 	class APawn * PlayerPawn;
@@ -63,8 +69,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Targeting")
 	float TargetingRate = 0.005f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Targeting")
-
 	float Accurency = 10;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Targeting")
+	float CannonSwapSpeed = 5;
+
+	FTimerHandle CannonSwapTimer;
+
 	const FString BodyMeshPath = "StaticMesh'/Game/CSC/Meshes/SM_CSC_Tower1.SM_CSC_Tower1'";
 	const FString TurretMeshPath = "StaticMesh'/Game/CSC/Meshes/SM_CSC_Gun1.SM_CSC_Gun1'";
 		
@@ -77,4 +87,7 @@ protected:
 	bool IsPlayerInRange();
 	bool CanFire();
 	void Fire();
+	void SwapCannon();
+
+	bool IsPlayerSeen();
 };

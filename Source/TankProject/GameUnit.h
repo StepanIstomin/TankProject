@@ -18,6 +18,8 @@ class TANKPROJECT_API AGameUnit : public APawn, public IDamageTaker
 public:
 	AGameUnit();
 
+	
+
 	UFUNCTION()
 	void TakeDamage(FDamageData DamageData);
 
@@ -26,7 +28,7 @@ public:
 
 	UFUNCTION()
 	void DamageTaked(float DamageValue);
-
+	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* BodyMesh;
@@ -43,7 +45,11 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 	class UHealthComponent * HealthComponent;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
+	TSubclassOf<ACannon> MainCannonClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
+	TSubclassOf<ACannon> SecondCannonClass;
+
 	UPROPERTY()
 	ACannon* Cannon;
-
 };

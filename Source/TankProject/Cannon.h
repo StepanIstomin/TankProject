@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GameStruct.h"
+#include "Camera/CameraShakeBase.h"
 #include "Cannon.generated.h"
 
 class UArrowComponent;
@@ -57,6 +58,13 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
 	TSubclassOf<class AProjectile> ProjectileClass;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Effects")
+	class UParticleSystemComponent* ShootEffect;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Effects")
+	class UAudioComponent* AudioEffect;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Effects")
+	TSubclassOf<class UCameraShakeBase> CameraShake;
 	
 	bool ReadyToFire = false;
 	bool BurstActive = false;

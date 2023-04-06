@@ -7,6 +7,8 @@
 #include "Projectile.h"
 #include "DrawDebugHelpers.h"
 #include "DamageTaker.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Components/AudioComponent.h"
 
 // Sets default values
 ACannon::ACannon()
@@ -23,6 +25,14 @@ ACannon::ACannon()
 	ProjectileSpawnPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("SpawnPoint"));
 	ProjectileSpawnPoint->SetupAttachment(CannonMesh);
 
+	ShootEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Shoot Effect"));
+	ShootEffect->SetupAttachment(ProjectileSpawnPoint);
+	ShootEffect->SetAutoActivate(false);
+
+	AudioEffect = CreateDefaultSubobject<UAudioComponent>(TEXT("Audio Effect"));
+	AudioEffect->SetupAttachment(SceneComp);
+	AudioEffect->SetAutoActivate(false);
+
 	BurstCount = ShotsInBurst;
 }
 
@@ -32,7 +42,6 @@ void ACannon::Fire()
 	{
 		return;
 	}
-	
 	if (CannonType == ECannonType::FireProjectile)
 	{
 		GEngine->AddOnScreenDebugMessage(20, 2, FColor::Green, "Fire - projectile");
@@ -44,6 +53,7 @@ void ACannon::Fire()
 			Projectile->Start();
 		}
 
+
 	}
 	else if (CannonType == ECannonType::AutoProjectile) {
 		StartAutofire();
@@ -53,6 +63,19 @@ void ACannon::Fire()
 		LaserShot();
 	}
 
+	if (ShootEffect)
+	{
+		ShootEffect->ActivateSystem();
+	}
+	if (AudioEffect)
+	{
+		AudioEffect->Play();
+	}
+	if (CameraShake)
+	{
+		GetWorld()->GetFirstPlayerController()->ClientPlayCameraShake(CameraShake);
+	}
+	
 	AmmoAmount--;
 	GEngine->AddOnScreenDebugMessage(21, 2, FColor::Purple, FString::Printf(TEXT("Ammo left %i"), AmmoAmount));
 	

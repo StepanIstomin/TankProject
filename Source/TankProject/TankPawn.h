@@ -33,6 +33,19 @@ public:
 	void SwapCannon();
 	void AddAmmo(int ammo);
 
+	FVector GetEyesPosition() const;
+
+	//AI
+	UFUNCTION()
+	TArray<FVector> GetPatrollingPath() {return PatrollingPath;};
+	UFUNCTION()
+	float GetMovementAccurency() {return MovementAccurency; };
+	UFUNCTION()
+	FVector GetTurretForwardVector();
+	UFUNCTION()
+	void RotateTurretTo(FVector TargetPosition);
+
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -57,10 +70,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	class UCameraComponent* Camera;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
-	TSubclassOf<ACannon> MainCannonClass;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
-	TSubclassOf<ACannon> SecondCannonClass;
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
+	//TSubclassOf<ACannon> MainCannonClass;
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
+	//TSubclassOf<ACannon> SecondCannonClass;
 		
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float MoveSpeed = 100.0f;
@@ -69,10 +82,16 @@ protected:
 	float RotationSpeed = 100.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Rotation")
-	float TurretRotationInterpolationKey = 0.02f;
+	float TurretRotationInterpolationKey = 0.5f;
 
 	UPROPERTY()
 	class ATankPlayerController* TankController;
+
+	// AI
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI | Move params | Patrol points" , Meta = (MakeEditWidget = true))
+	TArray<FVector> PatrollingPath;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI | Move params | Accurency")
+	float MovementAccurency = 50;
 
 private:
 	float targetForwardAxisValue = 0.0f;
@@ -81,5 +100,4 @@ private:
 
 	void MoveTank(float Deltatime);
 
-	void RotateTurret();
 };

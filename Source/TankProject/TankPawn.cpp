@@ -45,11 +45,8 @@ void ATankPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//Movement and rotation
+	//Movement, rotation & Turret Rotation
 	MoveTank(DeltaTime);
-
-	//Turret Rotation
-	RotateTurret();
 }
 
 void ATankPawn::MoveForward(float Value)
@@ -124,6 +121,25 @@ void ATankPawn::AddAmmo(int ammo)
 	}
 }
 
+FVector ATankPawn::GetEyesPosition() const
+{
+	return CannonSetupPoint->GetComponentLocation();
+}
+
+FVector ATankPawn::GetTurretForwardVector()
+{
+	return TurretMesh->GetForwardVector();
+}
+
+void ATankPawn::RotateTurretTo(FVector TargetPosition)
+{
+	FRotator targetRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetPosition);
+	FRotator currRotation = TurretMesh->GetComponentRotation();
+	targetRotation.Pitch = currRotation.Pitch;
+	targetRotation.Roll = currRotation.Roll;
+	TurretMesh->SetWorldRotation(FMath::Lerp(currRotation, targetRotation, TurretRotationInterpolationKey));
+}
+
 void ATankPawn::BeginPlay()
 {
 	Super::BeginPlay();
@@ -139,25 +155,18 @@ void ATankPawn::MoveTank(float DeltaTime)
 	FVector RightVector = GetActorRightVector();
 	FVector movePosition = CurrentPosition + (ForwardVector * targetForwardAxisValue + RightVector * targetRightAxisValue) * MoveSpeed * DeltaTime;
 	SetActorLocation(movePosition, true);
+
 	//Rotation
 	float yawRotation = RotationSpeed * targetRotateRightAxisValue * DeltaTime;
 	FRotator currentRotation = GetActorRotation();
 	yawRotation += currentRotation.Yaw;
 	FRotator newRotation = FRotator(0.0f, yawRotation, 0.0f);
 	SetActorRotation(newRotation);
-}
 
-void ATankPawn::RotateTurret()
-{
+	//Turret Rotation
 	if (TankController)
 	{
 		FVector mousePos = TankController->GetMousePosition();
-		FRotator targetRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), mousePos);
-		FRotator currRotation = TurretMesh->GetComponentRotation();
-		targetRotation.Pitch = currRotation.Pitch;
-		targetRotation.Roll = currRotation.Roll;
-
-		FRotator newTurretRotation = FMath::Lerp(currRotation, targetRotation, TurretRotationInterpolationKey);
-		TurretMesh->SetWorldRotation(newTurretRotation);
+		RotateTurretTo(mousePos);
 	}
 }

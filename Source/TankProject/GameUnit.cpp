@@ -40,4 +40,3 @@ void AGameUnit::DamageTaked(float DamageValue)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Turret %s taked damage:%f Health:%f"), *GetName(), DamageValue, HealthComponent->GetHealth());
 }
-
