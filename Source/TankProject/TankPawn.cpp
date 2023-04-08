@@ -11,6 +11,7 @@
 #include "Components/ArrowComponent.h"
 #include "Cannon.h"
 
+
 // Sets default values
 ATankPawn::ATankPawn()
 {
@@ -124,6 +125,26 @@ void ATankPawn::AddAmmo(int ammo)
 FVector ATankPawn::GetEyesPosition() const
 {
 	return CannonSetupPoint->GetComponentLocation();
+}
+
+
+	
+
+void ATankPawn::SetPatrollingPoints(TArray<ATargetPoint*> NewPatrollingPoints)
+{
+	PatrollingPath = NewPatrollingPoints;
+}
+
+
+TArray<FVector> ATankPawn::GetPatrollingPath()
+{
+	TArray<FVector> points;
+	for (ATargetPoint* point : PatrollingPath)
+	{
+		points.Add(point->GetActorLocation());
+	}
+	return points;
+
 }
 
 FVector ATankPawn::GetTurretForwardVector()

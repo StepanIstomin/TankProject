@@ -50,4 +50,5 @@ protected:
 
 	bool IsPlayerSeen();
 
+	void Initialize();
 };

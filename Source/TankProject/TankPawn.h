@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/TargetPoint.h"
 #include "GameFramework/Pawn.h"
 #include "GameUnit.h"
 #include "TankPawn.generated.h"
+
 
 class UStaticMeshComponent;
 class ACannon;
@@ -36,33 +38,22 @@ public:
 	FVector GetEyesPosition() const;
 
 	//AI
+	void SetPatrollingPoints(TArray<ATargetPoint*> NewPatrollingPoints);
+
 	UFUNCTION()
-	TArray<FVector> GetPatrollingPath() {return PatrollingPath;};
+	TArray<FVector> GetPatrollingPath();
+
 	UFUNCTION()
 	float GetMovementAccurency() {return MovementAccurency; };
+
 	UFUNCTION()
 	FVector GetTurretForwardVector();
+
 	UFUNCTION()
 	void RotateTurretTo(FVector TargetPosition);
 
-
 protected:
 	virtual void BeginPlay() override;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-	//UStaticMeshComponent* BodyMesh;
-	
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-	//UStaticMeshComponent* TurretMesh;
-
-	//UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
-	//class UArrowComponent* CannonSetupPoint;
-	
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-	//class UBoxComponent* BoxCollision;
-
-	//UPROPERTY()
-	//ACannon* Cannon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	class USpringArmComponent* SpringArm; // component for camera
@@ -70,11 +61,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	class UCameraComponent* Camera;
 	
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
-	//TSubclassOf<ACannon> MainCannonClass;
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
-	//TSubclassOf<ACannon> SecondCannonClass;
-		
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float MoveSpeed = 100.0f;
 
@@ -89,7 +75,8 @@ protected:
 
 	// AI
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI | Move params | Patrol points" , Meta = (MakeEditWidget = true))
-	TArray<FVector> PatrollingPath;
+	TArray<class ATargetPoint*> PatrollingPath;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI | Move params | Accurency")
 	float MovementAccurency = 50;
 
