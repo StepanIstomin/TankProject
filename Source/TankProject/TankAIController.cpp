@@ -100,9 +100,9 @@ bool ATankAIController::IsPlayerSeen()
 		{
 			if (hitResult.GetActor() == PlayerPawn)
 			{
-				DrawDebugLine(GetWorld(), eyesPos, playerPos, FColor::Red, false, 0.1f, 0, 10);
+				//DrawDebugLine(GetWorld(), eyesPos, playerPos, FColor::Red, false, 0.1f, 0, 10);
 			}
-			DrawDebugLine(GetWorld(), eyesPos, hitResult.Location, FColor::Cyan, false, 0.1f, 0, 10);
+			//DrawDebugLine(GetWorld(), eyesPos, hitResult.Location, FColor::Cyan, false, 0.1f, 0, 10);
 			return hitResult.GetActor() == PlayerPawn;
 		}
 	}

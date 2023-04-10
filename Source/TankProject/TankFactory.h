@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "DamageTaker.h"
 #include "TankPawn.h"
+#include "MapLoader.h"
 #include "TankFactory.generated.h"
 
 UCLASS()
@@ -24,6 +25,9 @@ protected:
 	UStaticMeshComponent* BuildingMesh;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+	UStaticMeshComponent* DestroyedMesh;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 	class UArrowComponent * TankSpawnPoint;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
@@ -40,6 +44,11 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn tanks params")
 	TArray<ATargetPoint*> TankWayPoints;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn tanks params")
+	class AMapLoader* LinkedMapLoader;
+
+	bool bNotDestoyed = true;
 	
 protected:
 	virtual void BeginPlay() override;

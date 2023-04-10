@@ -22,6 +22,10 @@ ATankFactory::ATankFactory()
 	BuildingMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Building Mesh"));
 	BuildingMesh->SetupAttachment(HitCollider);
 
+	DestroyedMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Destroyed Mesh"));
+	DestroyedMesh->SetupAttachment(HitCollider);
+	DestroyedMesh->SetVisibility(false);
+
 	TankSpawnPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("Cannon setup point"));
 	TankSpawnPoint->AttachToComponent(sceneComp, FAttachmentTransformRules::KeepRelativeTransform);
 
@@ -40,13 +44,17 @@ void ATankFactory::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (LinkedMapLoader)
+		LinkedMapLoader->SetIsActivated(false);
+
 	FTimerHandle _targetingTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(_targetingTimerHandle, this, &ATankFactory::SpawnNewTank, SpawnTankRate, true, SpawnTankRate);
-
 }
 
 void ATankFactory::SpawnNewTank()
 {
+	if (!bNotDestoyed)
+		return;
 	FTransform spawnTransform(TankSpawnPoint->GetComponentRotation(), TankSpawnPoint->GetComponentLocation(), FVector(1));
 	ATankPawn* newTank = GetWorld()->SpawnActorDeferred<ATankPawn>(SpawnTankClass, spawnTransform, this, nullptr, 
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
@@ -58,7 +66,12 @@ void ATankFactory::SpawnNewTank()
 
 void ATankFactory::Die()
 {
-	Destroy();
+	if (LinkedMapLoader)
+		LinkedMapLoader->SetIsActivated(true);
+	BuildingMesh->SetVisibility(false);
+	DestroyedMesh->SetVisibility(true);
+	bNotDestoyed = false;
+	//Destroy();
 }
 
 void ATankFactory::DamageTaked(float DamageValue)

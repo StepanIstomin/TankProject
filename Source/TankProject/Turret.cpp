@@ -10,12 +10,6 @@ ATurret::ATurret()
 {
  	PrimaryActorTick.bCanEverTick = false;
 
-	//BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Hit collider"));
-	//RootComponent = BoxCollision;
-
-	//BodyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Turret body"));
-	//BodyMesh->SetupAttachment(BoxCollision);
-	
 	TurretMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Turret turret"));
 	TurretMesh->SetupAttachment(BodyMesh, "ADD_Parts_Here_Socket");
 
@@ -28,12 +22,6 @@ ATurret::ATurret()
 	UStaticMesh* bodyMeshTemp = LoadObject<UStaticMesh>(this, *BodyMeshPath);
 	if (bodyMeshTemp)
 		BodyMesh->SetStaticMesh(bodyMeshTemp);
-
-	//HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health component"));
-	//HealthComponent->OnDie.AddUObject(this, &ATurret::Die);
-	//HealthComponent->OnDamaged.AddUObject(this, &ATurret::DamageTaked);
-
-	//TurretPawn = Cast<AGameUnit>(GetPawn());
 
 }
 
