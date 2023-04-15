@@ -41,27 +41,91 @@ void AProjectile::OnMeshOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor
 {
 	UE_LOG(LogTemp, Warning, TEXT("Projectile %s collided with %s. "), *GetName(), *OtherActor->GetName());
 
-	AActor* owner = GetOwner(); //Cannon
-	AActor* ownerByOwner = owner != nullptr ? owner->GetOwner() : nullptr; // Tank or Turret
-
-	if (OtherActor != owner && OtherActor != ownerByOwner) //  self-damage check
+	if (ExplodingProjectile)
 	{
-		if (OtherActor)
+		Explode();
+	}
+	else
+	{
+		PushAndDamage(OtherActor);
+	}
+	Destroy();
+}
+
+void AProjectile::Explode()
+{
+	FVector startPos = GetActorLocation();
+	FVector endPos = startPos + FVector(0.1f);
+	FCollisionShape Shape = FCollisionShape::MakeSphere(ExplodeRadius);
+	FCollisionQueryParams params = FCollisionQueryParams::DefaultQueryParam;
+	params.AddIgnoredActor(this);
+	params.bTraceComplex = true;
+	params.TraceTag = "Explode Trace";
+	TArray<FHitResult> AttackHit;
+	FQuat Rotation = FQuat::Identity;
+	bool sweepResult = GetWorld()->SweepMultiByChannel
+	(
+		AttackHit,
+		startPos,
+		endPos,
+		Rotation,
+		ECollisionChannel::ECC_Visibility,
+		Shape,
+		params
+	);
+	GetWorld()->DebugDrawTraceTag = "Explode Trace";
+	if (sweepResult)
+	{
+		for (FHitResult hitResult : AttackHit)
 		{
-			IDamageTaker* DamageActor = Cast<IDamageTaker>(OtherActor);
-			if (DamageActor)
+			AActor* OtherActor = hitResult.GetActor();
+
+			if (!OtherActor)
+				continue;
+
+			PushAndDamage(OtherActor);
+		}
+	}
+}
+
+void AProjectile::PushAndDamage(AActor* OtherActor)
+{
+	AActor* owner = GetOwner(); // Cannon
+	AActor* ownerByOwner = owner != nullptr ? owner->GetOwner() : nullptr; // Tank or Turret
+	AActor* ownerByOwnerByOwner = ownerByOwner != nullptr ? ownerByOwner->GetOwner() : nullptr; // root
+
+	if (OtherActor != owner && OtherActor != ownerByOwner && OtherActor != ownerByOwnerByOwner) // if(not me)
+	{
+		IDamageTaker* damageTakerActor = Cast<IDamageTaker>(OtherActor);
+
+		if (damageTakerActor)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Projectile %s collided with %s. "), *GetName(), *OtherActor->GetName());
+
+			FDamageData damageData;
+			damageData.DamageValue = Damage;
+			damageData.Instigator = owner;
+			damageData.DamageMaker = this;
+
+			damageTakerActor->TakeDamage(damageData);
+		}
+
+		else
+		{
+			UPrimitiveComponent* mesh = Cast<UPrimitiveComponent>(OtherActor->GetRootComponent());
+
+			if (mesh)
 			{
-				FDamageData damageData;
-				damageData.DamageValue = Damage;
-				damageData.Instigator = owner;
-				damageData.DamageMaker = this;
-				DamageActor->TakeDamage(damageData);
+				if (mesh->IsSimulatingPhysics())
+				{
+					FVector forceVector = OtherActor->GetActorLocation() - GetActorLocation();
+					forceVector.Normalize();
+					//для одиночного толчка (испулься), лучше использовать AddImpulse().
+					//mesh->AddImpulse(forceVector * PushForce, NAME_None, true);
+					// для постоянное воздействие на объект(например, для эффекта ветра или гравитации), лучше  AddForce().
+					mesh->AddForce(forceVector * PushForce, NAME_None, true);
+				}
 			}
-			else
-			{
-				OtherActor->Destroy();
-			}
-			Destroy();
 		}
 	}
 }

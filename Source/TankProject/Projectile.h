@@ -13,7 +13,7 @@ public:
 	// Sets default values for this actor's properties
 	AProjectile();
 	
-	void Start();
+	virtual void Start();
 
 protected:
 	// Called when the game starts or when spawned
@@ -34,13 +34,24 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
 	float Damage = 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	float PushForce = 1000;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
+	float ExplodeRadius = 100;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
+	bool ExplodingProjectile = true;
+
 	FTimerHandle MovementTimer;
 
 	UFUNCTION()
-	void Move();
+	virtual void Move();
 
 	UFUNCTION()
 	void OnMeshOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, 
 		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	void Explode();
+	void PushAndDamage(AActor* OtherActor);
 };
